@@ -6,7 +6,7 @@ which approximates the input visualization. It uses code adapted from from [Auto
 `app.py` is the entry point for the lambda function.
 
 ## Local development
-## Setup
+### Setup
 Tested using Python 3.9. 
 ```bash
 git clone https://github.com/etowahadams/autogosling-aws-lambda.git
@@ -18,7 +18,7 @@ pip install -r requirements.txt
 ## Download the ONNX model
 wget -O best.onnx https://drive.google.com/file/d/1x_e4V9LDgjsZhMWCnONbiQXK4Zfw6t27/view?usp=share_link
 ```
-## Test usage
+### Test usage
 This will return the predicted Gosling specification 
 ```bash
 python3 main.py glyph.png
