@@ -1,7 +1,7 @@
-# Autogosling in AWS Lambda
+# AutoGosling in AWS Lambda
 
 This is an AWS Lambda function which takes an image of a genomics visualization and returns a [Gosling specification](http://gosling-lang.org/docs/reference) 
-which approximates the input visualization. It uses code adapted from from [AutoGosling](https://github.com/autogosling/autogosling-tool).
+which approximates the input visualization. Most of the code was copied and adapted from [AutoGosling](https://github.com/autogosling/autogosling-tool).
 
 `app.py` is the entry point for the lambda function.
 
