@@ -1,4 +1,3 @@
-import cv2
 import onnxruntime as ort
 from PIL import Image, ImageColor, ImageDraw
 import numpy as np
@@ -9,42 +8,39 @@ w = "best.onnx"
 providers = ['CPUExecutionProvider']
 session = ort.InferenceSession(w, providers=providers)
 
-def letterbox(im, new_shape=(640, 640), color=(0, 0, 0), auto=True, scaleup=True, stride=32):
-    # Resize and pad image while meeting stride-multiple constraints
-    # import ipdb; ipdb.set_trace()
-    shape = im.shape[:2]  # current shape [height, width]
-    if isinstance(new_shape, int):
-        new_shape = (new_shape, new_shape)
-
-    # Scale ratio (new / old)
-    r = min(new_shape[0] / shape[0], new_shape[1] / shape[1])
-    if not scaleup:  # only scale down, do not scale up (for better val mAP)
-        r = min(r, 1.0)
-
-    # Compute padding
-    new_unpad = int(round(shape[1] * r)), int(round(shape[0] * r))
-    dw, dh = new_shape[1] - new_unpad[0], new_shape[0] - new_unpad[1]  # wh padding
-
-    if auto:  # minimum rectangle
-        dw, dh = np.mod(dw, stride), np.mod(dh, stride)  # wh padding
-
-    dw /= 2  # divide padding into 2 sides
-    dh /= 2
-
-    if shape[::-1] != new_unpad:  # resize
-        im = cv2.resize(im, new_unpad, interpolation=cv2.INTER_LINEAR)
-    top, bottom = int(round(dh - 0.1)), int(round(dh + 0.1))
-    left, right = int(round(dw - 0.1)), int(round(dw + 0.1))
-    im = cv2.copyMakeBorder(im, top, bottom, left, right, cv2.BORDER_CONSTANT, value=color)  # add border
-    return im, r, (dw, dh)
-
 classes = ["area", "bar", "betweenLink", "circular", "heatmap", "horizontal", "ideogram", "line", "linear", "point", "rect", "rule", "text", "triangleLeft", "triangleRight", "vertical", "withinLink"]
 colors = {name : ImageColor.getrgb(f'hsv({int(360 * i / len(classes))},100%,100%)') for i, name in enumerate(classes)}
 
-def predict(img):
-  image = np.array(img.copy())
-  img = np.array(img.copy())
-  image, ratio, dwdh = letterbox(image, auto=False)
+def prepare_image(image: Image.Image, size: int) -> np.ndarray:
+    # Get original image dimensions
+    w, h = image.size
+    
+    # Calculate aspect ratio
+    ratio = min(size / w, size / h)
+
+    # Calculate new dimensions
+    dw, dh = int(w * ratio), int(h * ratio)
+
+    # Resize image
+    resized_image = image.resize((dw, dh))
+
+    # Create a new blank image canvas
+    canvas = Image.new('RGB', (size, size), (255, 255, 255))
+
+    # Calculate paste position
+    paste_x = (size - dw) // 2
+    paste_y = (size - dh) // 2
+
+    # Paste resized image onto the canvas
+    canvas.paste(resized_image, (paste_x, paste_y))
+
+    return np.array(canvas), ratio, (w - dw, h - dh)
+
+def predict(pil_img: Image.Image):
+  image = np.array(pil_img.copy())
+  np_img = np.array(pil_img.copy())
+  
+  image, ratio, dwdh = prepare_image(pil_img, 640)
   image = image.transpose((2, 0, 1))
   image = np.expand_dims(image, 0)
   image = np.ascontiguousarray(image)
@@ -60,7 +56,7 @@ def predict(img):
 
   def make_image(class_set):
     important_info = []
-    ori_images = [img.copy()]
+    ori_images = [np_img.copy()]
     for i,(batch_id,x0,y0,x1,y1,cls_id,score) in enumerate(outputs):
         image = ori_images[int(batch_id)]
         box = np.array([x0,y0,x1,y1])

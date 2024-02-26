@@ -24,9 +24,13 @@ def viz_analysis(image):
     pil_image = Image.open(image)
     if not pil_image.mode == 'RGB':
         pil_image = pil_image.convert('RGB')
-    RESIZE_WIDTH = 600
-    RESIZE_HEIGHT = int(pil_image.size[1]*RESIZE_WIDTH/pil_image.size[0])
-    pil_image = pil_image.resize((RESIZE_WIDTH,RESIZE_HEIGHT))
+    
+    # Resize the image
+    width, height = pil_image.size
+    new_width = 600
+    new_height = int((new_width / width) * height)
+    pil_image = pil_image.resize((new_width, new_height))
+    
     shape_img, _, shape_info, prop_info = predict(pil_image)
 
     '''

@@ -23,3 +23,9 @@ This will return the predicted Gosling specification
 ```bash
 python3 main.py glyph.png
 ```
+
+## Building the Lambda function
+``` bash
+zip -r deployment.zip env/lib/python3.9/site-packages
+zip deployment.zip app.py assemble.py best.onnx marker.py object_detection.py utils.py main.py
+```
