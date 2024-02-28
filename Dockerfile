@@ -14,6 +14,7 @@ COPY lambda_function.py ${LAMBDA_TASK_ROOT}
 COPY assemble.py ${LAMBDA_TASK_ROOT}
 COPY utils.py ${LAMBDA_TASK_ROOT}
 
+RUN yum install wget -y
 RUN wget -O ${LAMBDA_TASK_ROOT}/best.onnx https://drive.google.com/file/d/1x_e4V9LDgjsZhMWCnONbiQXK4Zfw6t27/view?usp=share_link
 
 
