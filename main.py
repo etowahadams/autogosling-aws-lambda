@@ -1,10 +1,12 @@
-from PIL import Image
-from utils import parse_list, merge_identical_boxes,select_best_from_identical_boxes,merge_parsed_list
-from assemble import construct_spec, clean_track_info
-from object_detection import predict
 from io import BytesIO
 import base64
 import json
+from PIL import Image
+
+from utils import parse_list, merge_identical_boxes,select_best_from_identical_boxes,merge_parsed_list
+from assemble import construct_spec, clean_track_info
+from object_detection import predict
+
 
 def add_title(e):
     e[1]["title"] = str(e[0]+1)
