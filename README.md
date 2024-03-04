@@ -21,7 +21,7 @@ Download the ONNX model from [here](https://drive.google.com/file/d/1x_e4V9LDgjs
 ### Test usage
 This will return the predicted Gosling specification 
 ```bash
-python3 main.py glyph.png
+python3 main.py test-images/glyph.png
 ```
 ### Test the lambda function endpoint
 ```bash
