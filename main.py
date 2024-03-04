@@ -32,7 +32,6 @@ def viz_analysis(image):
     new_width = 600
     new_height = int((new_width / width) * height)
     pil_image = pil_image.resize((new_width, new_height))
-    
     shape_img, _, shape_info, prop_info = predict(pil_image)
 
     '''
@@ -45,7 +44,6 @@ def viz_analysis(image):
     '''
 
     shape_info_parsed = select_best_from_identical_boxes([parse_list(my_list) for my_list in shape_info])
-
 
     prop_info_parsed = merge_identical_boxes([parse_list(my_list) for my_list in prop_info])
 

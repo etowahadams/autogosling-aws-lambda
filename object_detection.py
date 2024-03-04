@@ -19,22 +19,22 @@ def prepare_image(image: Image.Image, size: int) -> np.ndarray:
     ratio = min(size / w, size / h)
 
     # Calculate new dimensions
-    dw, dh = int(w * ratio), int(h * ratio)
+    scaled_w, scaled_h = int(w * ratio), int(h * ratio)
 
     # Resize image
-    resized_image = image.resize((dw, dh))
+    resized_image = image.resize((scaled_w, scaled_h))
 
     # Create a new blank image canvas
     canvas = Image.new('RGB', (size, size), (255, 255, 255))
 
     # Calculate paste position
-    paste_x = (size - dw) // 2
-    paste_y = (size - dh) // 2
+    paste_x = (size - scaled_w) // 2
+    paste_y = (size - scaled_h) // 2
 
     # Paste resized image onto the canvas
     canvas.paste(resized_image, (paste_x, paste_y))
 
-    return np.array(canvas), ratio, (w - dw, h - dh)
+    return np.array(canvas), ratio, (paste_x, paste_y)
 
 def predict(pil_img: Image.Image):
   image = np.array(pil_img.copy())
@@ -57,20 +57,17 @@ def predict(pil_img: Image.Image):
   def make_image(class_set):
     important_info = []
     ori_images = [np_img.copy()]
-    for i,(batch_id,x0,y0,x1,y1,cls_id,score) in enumerate(outputs):
-        image = ori_images[int(batch_id)]
+    for i,(batch_id,x0,y0,x1,y1,class_id,score) in enumerate(outputs):
         box = np.array([x0,y0,x1,y1])
         box -= np.array(dwdh*2)
         box /= ratio
         box = box.round().astype(np.int32).tolist()
-        cls_id = int(cls_id)
         score = round(float(score),3)
-        name = classes[cls_id]
-        color = colors[name]
-        if name in class_set:
-            name += ' '+str(score)
+        class_id = int(class_id)
+        class_name = classes[class_id]
+        if class_name in class_set:
             new_x0, new_y0, new_x1, new_y1 = box
-            important_info.append((classes[cls_id],new_x0,new_y0,new_x1,new_y1,cls_id,score))
+            important_info.append((class_name,new_x0,new_y0,new_x1,new_y1,class_id,score))
     return Image.fromarray(ori_images[0]), important_info
   
   shape_image, shape_info = make_image(["linear","circular"])

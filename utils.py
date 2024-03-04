@@ -59,7 +59,8 @@ def merge_identical_boxes(all_boxes,threshold=0.7):
         initial_obj = boxes[0].copy()
         
         marker_boxes= [box for box in boxes if box["class"] in marker_classes]
-        if len(marker_boxes)>0:
+        non_marker_boxes = [box for box in boxes if box["class"] not in marker_classes]
+        if len(marker_boxes)>0 and len(non_marker_boxes)>0:
             best_marker_score = max([box["score"] for box in marker_boxes])
             best_orient = max([box for box in boxes if box['class'] not in marker_classes], key = lambda x:x["score"])
             all_classes = [best_orient["class"]]+[box["class"] for box in marker_boxes if box['score']>threshold*best_marker_score]
