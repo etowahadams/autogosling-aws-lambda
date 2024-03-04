@@ -1,10 +1,12 @@
-from PIL import Image
-from utils import parse_list, merge_identical_boxes,select_best_from_identical_boxes,merge_parsed_list
-from assemble import construct_spec, clean_track_info
-from object_detection import predict
 from io import BytesIO
 import base64
 import json
+from PIL import Image
+
+from utils import parse_list, merge_identical_boxes,select_best_from_identical_boxes,merge_parsed_list
+from assemble import construct_spec, clean_track_info
+from object_detection import predict
+
 
 def add_title(e):
     e[1]["title"] = str(e[0]+1)
@@ -24,9 +26,12 @@ def viz_analysis(image):
     pil_image = Image.open(image)
     if not pil_image.mode == 'RGB':
         pil_image = pil_image.convert('RGB')
-    RESIZE_WIDTH = 600
-    RESIZE_HEIGHT = int(pil_image.size[1]*RESIZE_WIDTH/pil_image.size[0])
-    pil_image = pil_image.resize((RESIZE_WIDTH,RESIZE_HEIGHT))
+    
+    # Resize the image
+    width, height = pil_image.size
+    new_width = 600
+    new_height = int((new_width / width) * height)
+    pil_image = pil_image.resize((new_width, new_height))
     shape_img, _, shape_info, prop_info = predict(pil_image)
 
     '''
@@ -39,7 +44,6 @@ def viz_analysis(image):
     '''
 
     shape_info_parsed = select_best_from_identical_boxes([parse_list(my_list) for my_list in shape_info])
-
 
     prop_info_parsed = merge_identical_boxes([parse_list(my_list) for my_list in prop_info])
 

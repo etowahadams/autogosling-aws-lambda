@@ -1,0 +1,21 @@
+FROM public.ecr.aws/lambda/python:3.12
+
+# Copy requirements.txt
+COPY requirements.txt ${LAMBDA_TASK_ROOT}
+
+# Install the specified packages
+RUN pip install -r requirements.txt
+
+# Copy function code
+COPY main.py ${LAMBDA_TASK_ROOT}
+COPY marker.py ${LAMBDA_TASK_ROOT}
+COPY object_detection.py ${LAMBDA_TASK_ROOT}
+COPY lambda_function.py ${LAMBDA_TASK_ROOT}
+COPY assemble.py ${LAMBDA_TASK_ROOT}
+COPY utils.py ${LAMBDA_TASK_ROOT}
+
+RUN curl -o ${LAMBDA_TASK_ROOT}/best.onnx "https://autogosling.s3.us-east-2.amazonaws.com/best.onnx?response-content-disposition=inline&X-Amz-Security-Token=IQoJb3JpZ2luX2VjEIb%2F%2F%2F%2F%2F%2F%2F%2F%2F%2FwEaCXVzLWVhc3QtMSJHMEUCIQCP9hhU5J3b0CpHtqJnYelfX1yeM%2FBRcW2H%2BSn73DfepgIgAvDOswQnZaF0%2B78v5N1LUgwZhr0KiIRR9J%2FvWe%2BWZSMq8AMIfhAAGgw3NjUxMzkxNzM3ODUiDEKwgcwhcXW7MNSG8yrNA4Yw8TjHLJC2NqTV2cvfOnflydE7TxVRPxnobFUy9x9GxCHvq8tMz7a3L8b1OaZOpWy36ueZnmTijiY74eXcqs62AD69QYT7g54xMdR%2FitQcpXPj1V9QojszmoyUOCMPwLxzB4Meyw8jUn9RrAL2MlhnK%2B6qsgsA%2FJyE9kBGb%2FpRS3xlghrlM8eQ4GDSKKVqFH%2FTj8pWXPfSel5duI9vnOvqUQQjwX5SmBWuG524PDnd7uLC3Qj7cK7lhyGi4dmZzOzTujn8UX%2BPknnrKez1OiJyfv7BaDlJ1buOtco2m%2B8lRfSl%2BbktCGRhGP%2FYUtgEA7u4%2BPNcYxHtrRpwZHy%2Fpm8XpYv2PFd%2Ba8Ry9L6hDHSzsIn2qsxHB%2FC9waTpTSMnhnppuAv2FXFHXKftGsZlfbWHO4iXOL%2BRG7V%2BTx0T3j2weQHk9dN8KIj3zKJhTcDOIDHBwMAj5kAtx08qHybNLKuO%2BmFwRjGiU%2FLtTUYOg9aF4%2FfcKyr4%2FGgzNizT3xB3ossG00y5k3dKGz3RFZiCi%2BVfGhrgRnPiK3RBv2ZNxbUmqFhPtxYGb7ZtE4jb5cpes1jAUKZfWRfgJWY0upFpGr6FPGTW8zrYyobCg%2FohMKvzmK8GOpQCJqWk%2BawoUY8eWYby%2BkxvkqrpYgSN3Cdd07m5cHWYxLKOixrjsA3HBT2P%2FQg1JOytrpYgW2WvyykjrgdV%2FSSs7Vkl4evWmWRfwwJza7fNPelM1chAV0TP20KXAeAnmEWzPDcHOUXT%2B25lgJoJcK44QzUuXH6NRKNhvlH0U8Y6VScMwSYrXj06BYys8AwkJJ%2FoS9dnmpTbpNik1ZlPK3jVgb1mxxSNrM7Mcuyi1U61R1YfNJhmP0KWRd1qjuqG7kfdEFvbj0R9E%2BKvZALVhenWJTb%2B2ZVr0b5TFhnabiv2XaWQJBl7WOrkJkU4YzcSCRb77fDjEDpXJos7fmcyweAsCEZsl%2BjCGMKpNyOHStbF1WkyBqPt&X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Date=20240304T211503Z&X-Amz-SignedHeaders=host&X-Amz-Expires=43200&X-Amz-Credential=ASIA3EJOZIGM4QRTXZ7G%2F20240304%2Fus-east-2%2Fs3%2Faws4_request&X-Amz-Signature=ed37b901f45b82658804408e0a7415a2b240065844c773d65c865e9ad11dcf7f"
+
+
+# Set the CMD to your handler (could also be done as a parameter override outside of the Dockerfile)
+CMD [ "lambda_function.handler" ]

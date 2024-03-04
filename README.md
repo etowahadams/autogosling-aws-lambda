@@ -15,11 +15,15 @@ cd autogosling-aws-lambda
 python -m venv env
 source env/bin/activate
 pip install -r requirements.txt
-## Download the ONNX model
-wget -O best.onnx https://drive.google.com/file/d/1x_e4V9LDgjsZhMWCnONbiQXK4Zfw6t27/view?usp=share_link
 ```
+Download the ONNX model from [here](https://drive.google.com/file/d/1x_e4V9LDgjsZhMWCnONbiQXK4Zfw6t27/view?usp=share_link) and place it in the root directory of the project.
+
 ### Test usage
 This will return the predicted Gosling specification 
 ```bash
-python3 main.py glyph.png
+python3 main.py test-images/glyph.png
+```
+### Test the lambda function endpoint
+```bash
+python3 test.py
 ```
